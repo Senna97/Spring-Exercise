@@ -2,6 +2,7 @@ package jdbc.dao;
 
 import jdbc.domain.User;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +12,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(SpringExtension.class)
@@ -53,8 +56,23 @@ class UserDaoTest {
 
     @Test
     public void find() {
+        userDao.add(user1);
         assertThrows(EmptyResultDataAccessException.class, () -> {
-            userDao.findById("4");
+            userDao.findById("3");
         });
+    }
+
+    @Test
+    @DisplayName("없으면 빈 리스트를, 있으면 개수만큼 리턴")
+    void getAllTest() {
+        List<User> users = userDao.getAll();
+
+        assertEquals(0, users.size());
+
+        userDao.add(user1);
+        userDao.add(user2);
+        userDao.add(user3);
+        users = userDao.getAll();
+        assertEquals(3, users.size());
     }
 }
